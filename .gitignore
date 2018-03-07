@@ -1,0 +1,12 @@
+## ignore director
+
+/mtk/venv
+/mtk/venv1
+/mtk/reference
+
+## ignore csv txt
+*.txt
+*.csv
+*.bin
+*.map
+*.log
