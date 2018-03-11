@@ -1,4 +1,4 @@
-# 2018“云移杯- 景区口碑评价分值预测
+# 2018“云移杯- 景区口碑评价分值预测 (baseline 0.53249)
 
 ## feature
 - tf-idf
@@ -15,5 +15,3 @@
 
 ## ensemble
 stacking
-
-## baseline 0.53249
