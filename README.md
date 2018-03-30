@@ -68,6 +68,7 @@
 - lightGBM进行5折bagging，baseline: 0.52451
 - xgboost单模型全集训练，baseline: 0.52832
 - textCNN， baseline: 0.51386
+- random foreset 多分转二分，给stacking做融合
 
 textCNN详见链接：https://github.com/brightmart/text_classification
 
