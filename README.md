@@ -52,7 +52,7 @@
 部分特征提取在：/explore/Feature Explore0209.ipynb
 
 ## 模型
-模型就很简单了，对于非结构化数据，直接转成了固定维数的结构化数据，
+模型就很简单了，对于非结构化数据，直接转成了固定维数的结构化数据，可直接送入模型
 
 - lightGBM进行5折bagging，baseline: 0.52451
 - xgboost单模型全集训练，baseline: 0.52832
