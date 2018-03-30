@@ -49,6 +49,8 @@
 ### doc2vec
 上述特征缺少了前后词之间的上下文关系，为了提取上下文信息，可采用doc2vec来提取，输入一条评论 -> 200维的vector，把这200维当特征直接丢到模型中训练即可。此处采用java版的hankcs doc2vec，详见：https://github.com/hankcs/HanLP
 
+部分特征提取在：/explore/Feature Explore0209.ipynb
+
 ## 模型
 模型就很简单了，对于非结构化数据，直接转成了固定维数的结构化数据，
 
