@@ -76,7 +76,7 @@ textCNN详见链接：https://github.com/brightmart/text_classification
 在做textCNN的时候，会进行一个sequence padding处理，此处并非简单的截断和随机填补成固定长度。而是在截断时，根据tf-idf的关键词列表，删除无意义词，填补时，根据tf-idf的topK词进行取整翻倍，效果比传统sequence padding好。
 
 ## 模型融合
-采用stacking，在做上述三个单模型时，都会进行stacking特征的预提取，最终用xgb进行第二层的学习，随机堆了200多个lgbm模型和一些开源模型后能够提升到0.53362。
+采用stacking，在做上述几个单模型时，都会进行stacking特征的预提取，最终用xgb进行第二层的学习，随机堆了200多个lgbm模型和一些开源模型后能够提升到0.53362。
 
 ### 后记
 这个项目未经整理，且用了JAVA和PYTHON同时编写，无法执行，自己也没太多精力写个傻瓜式的执行顺序。核心思路阐述完毕，代码中的trick可自行查看。欢迎交流，联系方式：daimenSong@gmail.com
