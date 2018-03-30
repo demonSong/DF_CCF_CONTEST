@@ -14,9 +14,7 @@ import com.hankcs.hanlp.classification.classifiers.NaiveBayesClassifier;
  * @author hankcs
  */
 public class DemoSentimentAnalysis {
-	/**
-	 * 中文情感挖掘语料-ChnSentiCorp 谭松波
-	 */
+
 	public static final String TOURIST_FOLDER = "data/旅游景点评论";
 
 	private IClassifier classifier;
