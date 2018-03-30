@@ -67,4 +67,4 @@ textCNN详见链接：https://github.com/brightmart/text_classification
 采用stacking，在做上述三个单模型时，都会进行stacking特征的预提取，最终用xgb进行第二层的学习，随机堆了200多个lgbm模型和一些开源模型后能够提升到0.53362
 
 ### 后记
-这个项目未经整理，且用了JAVA和PYTHON同时编写，无法执行，自己也没太多经历写个傻瓜式的执行顺序。核心思路阐述完毕，代码中的trick可自行查看。欢迎交流，联系方式：daimenSong@gmail.com
+这个项目未经整理，且用了JAVA和PYTHON同时编写，无法执行，自己也没太多精力写个傻瓜式的执行顺序。核心思路阐述完毕，代码中的trick可自行查看。欢迎交流，联系方式：daimenSong@gmail.com
