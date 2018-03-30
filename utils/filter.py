@@ -104,11 +104,25 @@ def filter(data_word, predict, feature = 'word'):
     })
     return submit
 
-if __name__ == '__main__':
-    if not os.path.exists(Configure.root_data_path + 'filter_map.txt'):
-        filter_train()
+def filter_fetaure(filename, featurefile, topK):
+    data = pd.read_csv(filename)
 
-    data_word = pd.read_csv(Configure.root_data_path + 'predict_word.csv')
-    predict = pd.read_csv('../result/lgb_0.6057142255356438_02130837.csv')
-    predict_f = filter(data_word, predict, feature='words')
-    predict_f.to_csv('../result/f_0.6057142255356438_02130837.csv', header=False, index=False)
+    feature_df = pd.read_csv(featurefile)
+    feature_df = feature_df.sort_values(by='gain_importance', ascending=False)
+    feature_importance = feature_df['feature_name'].tolist()[0:topK]
+
+    feature_importance.extend(['Id', 'Score'])
+    return data[feature_importance]
+
+if __name__ == '__main__':
+    # if not os.path.exists(Configure.root_data_path + 'filter_map.txt'):
+    #     filter_train()
+    #
+    # data_word = pd.read_csv(Configure.root_data_path + 'predict_word.csv')
+    # predict = pd.read_csv('../result/lgb_0.6057142255356438_02130837.csv')
+    # predict_f = filter(data_word, predict, feature='words')
+    # predict_f.to_csv('../result/f_0.6057142255356438_02130837.csv', header=False, index=False)
+
+
+    data = filter_fetaure('../input/data.csv', featurefile='../models/info/gain_importance_data.csv', topK=560)
+    data.to_csv('../input/data_560.csv', index=False)

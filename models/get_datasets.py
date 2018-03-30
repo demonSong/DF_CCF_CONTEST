@@ -17,6 +17,29 @@ import numpy as np
 import pandas as pd
 from conf.configure import Configure
 
+# 根据feature importance 自增特征训练
+def batch_with_gain_importance(featurefile, filename = None, dropDuplicate = False,
+                               fillNan = False, step = 20):
+    print('load data set...')
+    train, test = load_datasets(filename, dropDuplicate, fillNan)
+    print('load feature importance....')
+    feature_df = pd.read_csv(featurefile)
+    feature_df = feature_df.sort_values(by='gain_importance', ascending=False)
+    feature_importance = feature_df['feature_name'].tolist()
+
+    choose_feature = []
+    start = 0
+    while (len(choose_feature) < len(feature_importance)):
+        choose_feature.extend(feature_importance[start:min(start+step, len(feature_importance))])
+        start += step
+        print('now feature length is {}'.format(len(choose_feature)))
+
+        train_feature = choose_feature[::]
+        train_feature.extend(['Id', 'Score'])
+        test_feature = choose_feature[::]
+        test_feature.append('Id')
+        yield train[train_feature], test[test_feature]
+
 def load_datasets(filename = None, dropDuplicate = False, fillNan = False):
     print('load baseline features')
 
@@ -40,6 +63,7 @@ def load_datasets(filename = None, dropDuplicate = False, fillNan = False):
         train = pd.merge(user[['Id']], train, on = 'Id', how = 'left')
 
     return train, test
+
 # ratio = [938, 2189, 3792, 9874, 13207]
 def load_stacking_datasets(sample = False, dropDuplicate = False, ratio = []):
     print('load stacking features')
@@ -134,5 +158,13 @@ def threshold(result, feature='Score'):
     return result
 
 if __name__ == '__main__':
-    train, test = load_stacking_datasets(dropDuplicate=True)
-    print(train.info(), train.shape)
+    # train, test = load_stacking_datasets(dropDuplicate=True)
+    # print(train.info(), train.shape)
+    # feature = ['word_len_feature_22', 'word_len_feature_444', 'word_len_feature_851', 'word_len_feature_833', 'word_len_feature_403', 'word_len_feature_488', 'word_len_feature_400', 'word_len_feature_425', 'word_len_feature_800', 'word_len_feature_1213', 'word_len_feature_809', 'word_len_feature_73', 'word_len_feature_1251', 'word_len_feature_805', 'word_len_feature_462', 'word_len_feature_1288', 'word_len_feature_91', 'word_len_feature_1318', 'word_len_feature_46', 'word_len_feature_43']
+    # train, test = load_datasets(filename='../input/data_word_len.csv')
+    # hello = feature[::].extend(['Id', 'Score'])
+    # print(hello)
+    # print(train[hello].shape)
+    # print(test[feature].shape)
+    for train, test in bacth_with_gain_importance('../models/info/gain_importance_data_word_len.csv', filename='../input/data_word_len.csv'):
+        pass

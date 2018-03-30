@@ -161,7 +161,7 @@ def main():
     print('load train test datasets')
     train, test = load_datasets(dropDuplicate=False)
     batch_size = 1
-    submit_df = pd.DataFrame({'userid': test['Id']})
+    submit_df = pd.DataFrame({'Id': test['Id']})
 
     submit_pred = np.zeros((test.shape[0], 1))
     submit_pred_n = np.zeros((test.shape[0], batch_size))

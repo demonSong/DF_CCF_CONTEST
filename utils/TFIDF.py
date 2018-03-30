@@ -80,56 +80,72 @@ def read_label_list(filename, label=1):
 
         return dictionary
 
-def add_clf_feature(data_word, feature = 'feature'):
+
+def pad_sequence(maxlen = 20, feature = 'words'):
+    data_train = pd.read_csv(Configure.root_data_path + 'train_word.csv')
+    data_predict = pd.read_csv(Configure.root_data_path + 'predict_word.csv')
+    data_word = pd.concat([data_train, data_predict])
+
+    score = pd.read_csv(Configure.root_data_path + 'data.csv')
+    data_word = pd.merge(data_word, score[['Id', 'Score']], on = 'Id', how = 'left')
+
     if not os.path.exists(Configure.root_data_path + 'idf_{}.map'.format(feature)):
         idf(data_word, feature=feature)
     else:
         idf_map = read_map('idf_{}.map'.format(feature))
 
+    Id = data_word['Id'].values
     discuss = data_word[feature].values
+    score = data_word['Score'].values
 
-    label_list = read_label_list(label=1)
+    topK = maxlen
+    key_words = []
+    tf_idf_df = []
 
-    new_feature = []
+    with open('../input/tourist.zh.label.txt', 'w', encoding='utf-8') as outf:
+        for _, dis in enumerate(discuss):
+            tf_map = defaultdict(int)
+            words = dis[1:-1]
+            words = words.split(';')
+            for word in words:
+                tf_map[word] += 1
+            n = len(words)
 
-    for _, dis in enumerate(discuss):
-        tf_map = defaultdict(int)
-        words = dis[1:-1]
-        words = words.split(';')
-        for word in words:
-            tf_map[word] += 1
-        n = len(words)
-        if n == 0:
-            new_feature.append([0] * topK)
-            continue
-        tf_idf_map = defaultdict(float)
-        for key in tf_map.keys():
-            if key in idf_map:
-                tf_idf_map[key] = tf_map[key] / n * float(idf_map[key])
-        if len(tf_idf_map) == 0:
-            key_words.append([''] * topK)
-            tf_idf_df.append([0] * topK)
-            continue
+            if n == 0:
+                print('Error no words, userId is {}', Id[_])
+                continue
 
-        # get tf-idf map
-        tf_idf_max = sorted(tf_idf_map.items(), key=lambda val: val[1], reverse=True)
-        key_word_topK = [''] * topK
-        tf_idf_topK = [0] * topK
-        for i in range(min(len(tf_idf_max), topK)):
-            key_word_topK[i] = tf_idf_max[i][0]
-            tf_idf_topK[i] = tf_idf_max[i][1]
+            tf_idf_map = defaultdict(float)
+            for key in tf_map.keys():
+                if key in idf_map:
+                    tf_idf_map[key] = tf_map[key] / n * float(idf_map[key])
 
-        key_words.append(key_word_topK)
-        tf_idf_df.append(tf_idf_topK)
-        if _ % 5000 == 0: print(_, key_words[max(0, _ - 10):_])
+            # get tf-idf map
+            tf_idf_max = sorted(tf_idf_map.items(), key=lambda val: val[1], reverse=True)
+            top_tf_idf_set = set()
+            value = []
 
-    for i in range(topK):
-        data_word['key_word_' + str(i)] = [val[i] for val in key_words]
-        data_word['tf_idf_' + str(i)] = [val[i] for val in tf_idf_df]
+            for i in range(min(len(tf_idf_max), maxlen)):
+                top_tf_idf_set.add(tf_idf_max[i][0])
 
-    del data_word['words']
-    data_word.to_csv(Configure.root_data_path + 'data_keyword.csv', index=False, encoding='utf-8')
-    print('done...')
+            if n >= maxlen: # 需要截断
+                for word in words:
+                    if word in top_tf_idf_set:
+                        value.append(word)
+            else:
+                for word in words:
+                    if word in top_tf_idf_set:
+                        value.append(word)
+                choice = np.random.choice(len(words), maxlen - len(words), replace=True)
+                for c in choice:
+                    value.append(words[c])
+
+            if _ % 5000 == 0:
+                print(_, value)
+
+            sentence = Id[_] + ' ' + ' '.join(value) + '\t' + '__label__' + str(score[_]) + '\n'
+            outf.write(sentence)
+    pass
 
 
 def main():
@@ -192,5 +208,4 @@ def main():
 
 
 if __name__ == '__main__':
-    data_word = pd.read_csv('../input/data_jieba.csv')
-    add_clf_feature(data_word, feature = 'words_jieba')
+    pad_sequence()

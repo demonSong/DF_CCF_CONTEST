@@ -248,9 +248,9 @@ def regression():
 
 
 def lgbm_regressor():
-    train, test = load_datasets()
+    train, test = load_datasets(filename='../input/data_560.csv')
     X_train, y_train, X_test, df_coulumns = getDataSet(train, test)
-    models = ['lr_' + str(i) for i in range(201, 300)]
+    models = ['lr_data_560' + str(i) for i in range(201, 300)]
     training_lgbm_regressor(X_train, y_train, X_test, df_coulumns, ratio = 0.8, model_name = models)
 
 if __name__ == '__main__':

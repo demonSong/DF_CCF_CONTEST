@@ -31,6 +31,7 @@ def threshold(result):
 
 def main():
     print('load train test datasets')
+    # train, test = load_datasets(filename='../input/data_word_len.csv')
     train, test = load_stacking_datasets()
 
     submit_df = pd.DataFrame({'userid' : test['Id']})
@@ -44,16 +45,17 @@ def main():
 
     xgb_params = {
         'eta': 0.01,
-        'min_child_weight': 20,
-        'colsample_bytree': 0.5,
-        'max_depth': 10,
-        'subsample': 0.5,
-        'lambda': 2.0,
+        'min_child_weight': 15,
+        'colsample_bytree': 0.7,
+        'gamma':0,
+        'max_depth': 5,
+        'subsample': 0.9,
+        'alpha':1,
+        'lambda': 0.001,
         'scale_pos_weight': 1,
         'eval_metric': 'rmse',
         'objective': 'reg:linear',
         'seed':2018,
-        'tree_method':'gpu_exact',
         'silent': 1,
         'booster': 'gbtree'
     }
@@ -67,7 +69,7 @@ def main():
                        dtrain_all,
                        nfold=nfold,
                        stratified=True,
-                       num_boost_round=5000,
+                       num_boost_round=10000,
                        early_stopping_rounds=100,
                        verbose_eval=100,
                        show_stdv=False)
