@@ -44,23 +44,25 @@
 - 逆文档率（idf）= log(词料库评论的总数 / (出现该词的评论数 + 1))
 - 词（tf-idf）= 词频（tf） * 逆文档率（idf）
 
-再进行统计特征，效果提升了近0.001个点。
+再进行统计特征，效果提升了近0.001个点。详见：/utils/TFIDF.py
 
 ### doc2vec
+上述特征缺少了前后词之间的上下文关系，为了提取上下文信息，可采用doc2vec来提取，输入一条评论 -> 200维的vector，把这200维当特征直接丢到模型中训练即可。此处采用java版的hankcs doc2vec，详见：https://github.com/hankcs/HanLP
 
+## 模型
+模型就很简单了，对于非结构化数据，直接转成了固定维数的结构化数据，
 
-## feature
-- tf-idf
-- doc2vec
-- bag of words
+- lightGBM进行5折bagging，baseline: 0.52451
+- xgboost单模型全集训练，baseline: 0.52832
+- textCNN， baseline: 0.51386
 
-## model
-- xgboost bagging regression
-- lightgbm bagging regression
-- random forest classification
-- ridge
-- lasso
-- lstm
+textCNN详见链接：https://github.com/brightmart/text_classification
 
-## ensemble
-stacking
+小小的创新：
+在做textCNN的时候，会进行一个sequence padding处理，此处并非简单的截断和随机填补成固定长度。而是在截断时，根据tf-idf的关键词列表，删除无意义词，填补时，根据tf-idf的topK词进行取整翻倍，效果比传统sequence padding好。
+
+## 模型融合
+采用stacking，在做上述三个单模型时，都会进行stacking特征的预提取，最终用xgb进行第二层的学习，随机堆了200多个lgbm模型和一些开源模型后能够提升到0.53362
+
+### 后记
+这个项目未经整理，且用了JAVA和PYTHON同时编写，无法执行，自己也没太多经历写个傻瓜式的执行顺序。核心思路阐述完毕，代码中的trick可自行查看。欢迎交流，联系方式：daimenSong@gmail.com
